@@ -31,7 +31,6 @@ Look at the index.html file to see how things are configured and used. You can c
 
 For every project in S3DB, you have one or more collections. For each collection you can have one or more items and one or more rules. Each file upload is treated as a statement which requires an item ID and a rule ID to create.
  
-	<blockquote>
 		var data = {
 				's3dburl':'specify the S3DB url',
 				'itemid':'IXXX',
@@ -39,7 +38,6 @@ For every project in S3DB, you have one or more collections. For each collection
 				'spinnertext':' working...',
 			};
 		s3dbfu.init(data);
-	</blockquote>
 
 *	s3dburl - url for S3DB instance
 *	itemid - Item ID for file upload
