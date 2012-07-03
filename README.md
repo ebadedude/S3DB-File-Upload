@@ -8,22 +8,22 @@ This is a tool that allows users to upload files to S3DB instance and it is comp
 
 
 **Dependencies**
-*JQuery [link](http://code.jquery.com/jquery-1.7.2.min.js)
-*Twitter Bootstrap [link](http://twitter.github.com/bootstrap/)
-*JQuery File Upload [link](https://github.com/blueimp/jQuery-File-Upload)
+*	JQuery [link](http://code.jquery.com/jquery-1.7.2.min.js)
+*	Twitter Bootstrap [link](http://twitter.github.com/bootstrap/)
+*	JQuery File Upload [link](https://github.com/blueimp/jQuery-File-Upload)
 
  
 **Features**
-*File Upload with drag and drop features
-*On the fly connection to S3DB
-*Forgot your API key? automaticAPI key generation
-*File listing
-*Ability to delete files
+*	File Upload with drag and drop features
+*	On the fly connection to S3DB
+*	Forgot your API key? automaticAPI key generation
+*	File listing
+*	Ability to delete files
 
 
 **TODO**
-*Remove delete button for files you cannot delete
-*Add waiting gestures (spinner) for processes that can take longer than 2 secs
+*	Remove delete button for files you cannot delete
+*	Add waiting gestures (spinner) for processes that can take longer than 2 secs
   
 
 **Usage**
@@ -41,7 +41,7 @@ For every project in S3DB, you have one or more collections. For each collection
 		s3dbfu.init(data);
 	</blockquote>
 
-*s3dburl - url for S3DB instance
-*itemid - Item ID for file upload
-*ruleid - Rule ID for file upload
-*spinnertext - Text that you would like to see after the spinner
+*	s3dburl - url for S3DB instance
+*	itemid - Item ID for file upload
+*	ruleid - Rule ID for file upload
+*	spinnertext - Text that you would like to see after the spinner
