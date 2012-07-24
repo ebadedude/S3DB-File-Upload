@@ -152,7 +152,7 @@
 						<td colspan="2"></td>
 					{% } %}
 						<td class="delete">
-							<button class="btn btn-danger" data-type="DELETE" data-url="http://{%=s3dbfu.s3dburl%}/multiupload.php?key={%=s3dbfu.apikey%}&statement_id=S{%=file.statement_id%}">
+							<button class="btn btn-danger" data-type="DELETE" data-url="http://{%=s3dbfu.s3dburl()%}/multiupload.php?key={%=s3dbfu.apikey%}&statement_id=S{%=file.statement_id%}">
 								<i class="icon-trash icon-white"></i>
 								<span>{%=locale.fileupload.destroy%}</span>
 							</button>
