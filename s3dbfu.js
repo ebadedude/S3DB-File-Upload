@@ -63,6 +63,55 @@ if(!String.hasOwnProperty('trim')) {
 		return urlParams;
 	};
 	
+	_loadscript = function(src,parentid,id,type) {
+		if(src && src.trim().length > 0) {
+			var myscript = document.createElement('script');
+			myscript.src = src;
+
+			//Script Tag ID
+			if(id && id.trim().length > 0) {
+				myscript.id = id;
+			}
+			
+			//Script Tag Type
+			if(type && type.trim().length > 0) {
+				myscript.type = type;
+			} else {
+				myscript.type = 'text/javascript';
+			}
+			
+			//if parentid is not specified use the DOM Head Tag
+			if(parentid && parentid.trim().length > 0) {
+				var elem = document.getElementById(parentid);
+				elem.appendChild(myscript);
+			} else {
+				var elem = document.getElementsByTagName('head')[0];
+				elem.appendChild(myscript);
+			}
+		}
+	};
+	
+	//type: right, left
+	_padzero = function(str,len,type) {
+		var diff='', mylen=str.trim().length;
+		len = parseInt(len);
+		
+		if(mylen >= len) {
+			return str;
+		} else {
+			for(var i=0; i < (len-mylen); i++) {
+				diff += '0';
+			}
+			if(type.trim().toLowerCase() === 'right') {
+				return str.trim()+diff;
+			} else if(type.trim().toLowerCase() === 'left') {
+				return diff+str.trim();
+			} else {
+				return str;
+			}
+		}
+	};
+	
 	_buildtable = function(id, rows, cols) {
 		var tb = document.createElement('table');
 		tb.id=id;
@@ -343,24 +392,26 @@ if(!String.hasOwnProperty('trim')) {
 					_username = _json.data[0].fullname;
 					s3dbfu.loginmenu();
 					s3dbfu.hidemodal(_logintype);
-					$("#fileupload").attr('action', _s3dburl+'/multiupload.php?key='+_apikey+'&item_id='+_itemid+'&rule_id='+_ruleid+'&format=json');
-			        // Load S3DB's existing files for a particuler item:
+					$("#fileupload").attr('action', _s3dburl+'/multiupload.php?key='+_apikey+'&collection_id='+_collid+'&rule_id='+_ruleid+'&format=json');
+			        // Load S3DB's existing files for the specified collection:
 			        $('#fileupload').each(function () {
 			            var that = this;
 			            $.getJSON(this.action, function (result) {
 			                if (result && result.length) {
 			                	var tmp_str,tmp_str1,reg=/(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?\^=%&amp;:\/~\+#]*[\w\-\@?\^=%&amp;\/~\+#])?/;
-								for(var i=0; i < result[0].message.done.length; i++) {
-									tmp_str = result[0].message.done[i].value.replace(' ', '');
+								for(var i=0; i < result[0].message.result.length; i++) {
+									tmp_str = result[0].message.result[i].value.replace(' ', '');
 									tmp_str1 = tmp_str.match(reg);
 									if(tmp_str1 && tmp_str1.length > 0) {
-										result[0].message.done[i].download_url = tmp_str1[0];
+										result[0].message.result[i].download_url = tmp_str1[0];
 									} else {
-										result[0].message.done[i].download_url = '#';
+										result[0].message.result[i].download_url = '#';
 									}
+									//fix delete button
+									
 								}
 			                    $(that).fileupload('option', 'done')
-			                        .call(that, null, {result: result[0].message.done});
+			                        .call(that, null, {result: result[0].message.result});
 			                }
 			            });
 			        });
