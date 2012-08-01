@@ -1,5 +1,5 @@
 /*
- * JavaScript S3DB File Upload 1.0.1
+ * JavaScript S3DB File Upload 1.0.2
  * https://github.com/ebadedude/S3DB-File-Upload
  *
  * Copyright 2012, Bade Iriabho
@@ -183,6 +183,17 @@ if(!String.hasOwnProperty('trim')) {
 		itemid:function() { return _itemid; },
 		ruleid:function() { return _ruleid; },
 		username:function() { return _username; },
+		displaymsg:function(parentid,msg,type,timeout) {
+			//type: error, warning, success, info
+			var myrand = 'msg'+_padzero(parseInt(Math.random()*1000000),7,'left');
+
+			var mydiv = document.createElement('div');
+			
+			
+			if(timeout && intval(timeout) > 0) {
+				
+			}
+		},
 		loginmenu:function() {
 			$("#username").text(_username);
 			$("#user-access-options")
