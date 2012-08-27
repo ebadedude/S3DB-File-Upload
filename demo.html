@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>s3db File Upload</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<link href="https://raw.github.com/ebadedude/S3DB-File-Upload/master/css/bootstrap.min.css" rel="stylesheet">
+		<style type="text/css">
+			body {
+				padding-top: 60px;
+				padding-bottom: 40px;
+			}
+		</style>
+		<link href="https://raw.github.com/ebadedude/S3DB-File-Upload/master/css/bootstrap-responsive.min.css" rel="stylesheet">
+		<link href="https://raw.github.com/ebadedude/S3DB-File-Upload/master/css/jquery.fileupload-ui.css" rel="stylesheet">
+	    <!--[if lt IE 9]>
+	      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	    <![endif]-->
+	</head>
+	<body>
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</a>
+					<a class="brand" href="#">S3DB File Upload</a>
+					<div id="user-access" class="btn-group pull-right">
+						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+							<i class="icon-user"></i> <span id="username">Login</span>
+							<span class="caret"></span>
+						</a>
+						<ul id="user-access-options" class="dropdown-menu">
+							<li><a href="javascript:s3dbfu.showmodal('loginUN');void(0);">with User Name</a></li>
+							<li class="divider"></li>
+							<li><a href="javascript:s3dbfu.showmodal('loginAK');void(0);">with API Key</a></li>
+						</ul>
+					</div>
+					<span id="s3db-instance" class="pull-right" style="padding:10px 10px 0px 0px;"></span>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li class="active"><a href="javascript:mainMenuChange('home');">Home</a></li>
+							<li><a href="javascript:mainMenuChange('about');">About</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div id="s3dbfu-msgs"></div>
+			<div id="homediv">
+				<form id="fileupload" action="" method="POST" enctype="multipart/form-data">
+				<div class="hero-unit">
+					<div class="row fileupload-buttonbar">
+						<div class="span7">
+							<span class="btn btn-success fileinput-button">
+								<i class="icon-plus icon-white"></i>
+								<span>Add files...</span>
+								<input type="file" name="files[]" multiple>
+							</span>
+							<button type="submit" class="btn btn-primary start">
+								<i class="icon-upload icon-white"></i>
+								<span>Start upload</span>
+							</button>
+							<button type="reset" class="btn btn-warning cancel">
+								<i class="icon-ban-circle icon-white"></i>
+								<span>Cancel upload</span>
+							</button>
+						</div>
+						<div class="span5 fileupload-progress fade">
+							<div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+								<div class="bar" style="width:0%;"></div>
+							</div>
+							<div class="progress-extended">&nbsp;</div>
+						</div>
+					</div>
+					<div class="fileupload-loading"></div>
+					<br>
+				</div>
+				<table role="presentation" class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
+				</form>
+			</div>
+			<div id="aboutdiv" class="hero-unit" style="display:none;">
+				<h3>S3DB File Upload</h3>
+				<p>Created by the Division of Informatics, Department of Pathology, University of Alabama at Birmingham (UAB)</p>
+				<p>Version: 1.0.2</p>
+			</div>
+			<footer>
+				<p>
+					University of Alabama at Birmingham<br />
+					Division of Informatics<br />
+					Department of Pathology<br />
+					<a href="http://uab.mathbiol.org/informatics" target="_blank">http://uab.mathbiol.org/informatics</a>
+				</p>
+			</footer>
+			<script id="template-upload" type="text/x-tmpl">
+				{% for (var i=0, file; file=o.files[i]; i++) { %}
+					<tr class="template-upload fade">
+						<td class="preview"><span class="fade"></span></td>
+						<td class="name"><span>{%=file.name%}</span></td>
+						<td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
+					{% if (file.error) { %}
+						<td class="error" colspan="2"><span class="label label-important">{%=locale.fileupload.error%}</span> {%=locale.fileupload.errors[file.error] || file.error%}</td>
+					{% } else if (o.files.valid && !i) { %}
+						<td>
+							<div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="bar" style="width:0%;"></div></div>
+						</td>
+						<td class="start">
+						{% if (!o.options.autoUpload) { %}
+							<button class="btn btn-primary">
+								<i class="icon-upload icon-white"></i>
+								<span>{%=locale.fileupload.start%}</span>
+							</button>
+						{% } %}
+						</td>
+					{% } else { %}
+						<td colspan="2"></td>
+					{% } %}
+						<td class="cancel">
+						{% if (!i) { %}
+							<button class="btn btn-warning">
+								<i class="icon-ban-circle icon-white"></i>
+								<span>{%=locale.fileupload.cancel%}</span>
+							</button>
+						{% } %}
+						</td>
+					</tr>
+				{% } %}
+			</script>
+			<script id="template-download" type="text/x-tmpl">
+				{% for (var i=0, file; file=o.files[i]; i++) { %}
+					<tr class="template-download fade">
+					{% if (file.error) { %}
+						<td></td>
+						<td class="name"><span>{%=file.file_name%}</span></td>
+						<td class="size"><span>{%=o.formatFileSize(parseInt(file.file_size))%}</span></td>
+						<td class="error" colspan="2"><span class="label label-important">{%=locale.fileupload.error%}</span> {%=locale.fileupload.errors[file.error] || file.error%}</td>
+					{% } else { %}
+						<td class="preview"></td>
+						<td class="name">
+						{% if (file.download_url == '#') { %}
+							{%=file.value%}
+						{% } else { %}
+							<a href="{%=file.download_url%}" title="{%=file.file_name%}" download="{%=file.file_name%}" target="_blank">{%=file.file_name%}</a>
+						{% } %}
+						</td>
+						<td class="size"><span>{%=o.formatFileSize(isNaN(parseInt(file.file_size))?'':parseInt(file.file_size))%}</span></td>
+						<td colspan="2"></td>
+					{% } %}
+						<td class="delete">
+							<button class="btn btn-danger" data-type="DELETE" data-url="{%=s3dbfu.s3dburl()%}/multiupload.php?key={%=file.apikey%}&statement_id=S{%=file.statement_id%}">
+								<i class="icon-trash icon-white"></i>
+								<span>{%=locale.fileupload.destroy%}</span>
+							</button>
+						</td>
+					</tr>
+				{% } %}
+			</script>
+		</div>
+	    <script src="https://raw.github.com/ebadedude/S3DB-File-Upload/master/js/jquery1.7.2.min.js"></script>
+	    <script src="https://raw.github.com/ebadedude/S3DB-File-Upload/master/js/bootstrap.min.js"></script>
+	    <script src="https://raw.github.com/ebadedude/S3DB-File-Upload/master/js/bootstrap-modal.js"></script>
+		<script src="https://raw.github.com/ebadedude/S3DB-File-Upload/master/js/jquery.ui.widget.js"></script>
+		<script src="https://raw.github.com/ebadedude/S3DB-File-Upload/master/js/tmpl.min.js"></script>
+		<script src="https://raw.github.com/ebadedude/S3DB-File-Upload/master/js/load-image.min.js"></script>		
+		<script src="https://raw.github.com/ebadedude/S3DB-File-Upload/master/js/jquery.iframe-transport.js"></script>
+		<script src="https://raw.github.com/ebadedude/S3DB-File-Upload/master/js/jquery.fileupload.js"></script>
+		<script src="https://raw.github.com/ebadedude/S3DB-File-Upload/master/js/jquery.fileupload-fp.js"></script>
+		<script src="https://raw.github.com/ebadedude/S3DB-File-Upload/master/js/jquery.fileupload-ui.js"></script>
+		<script src="https://raw.github.com/ebadedude/S3DB-File-Upload/master/js/locale.js"></script>
+	    <script src="https://raw.github.com/ebadedude/S3DB-File-Upload/master/s3dbfu.js"></script>
+		<script type="text/javascript">
+			$(function(){
+			    'use strict';
+			    // Initialize the jQuery File Upload widget:
+			    $('#fileupload').fileupload();
+			    // Enable iframe cross-domain access via redirect option:
+			    $('#fileupload').fileupload(
+			        'option',
+			        'redirect',
+			        window.location.href.replace(
+			            /\/[^\/]*$/,
+			            '/cors/result.html?%s'
+			        )
+			    );
+			    //S3DB File Upload Stuff
+			    var data = {
+		    		's3dburl':'',
+		    		'collectionid':'',
+		    		'ruleid':'',
+		    		'spinnertext':' working...',
+			    };
+			    s3dbfu.init(data);
+			});
+		    //Main Menu Stuff
+			function mainMenuChange(arg) {
+				if(arg === 'home') {
+					$("#aboutdiv").hide();
+					$("#homediv").show('normal');
+				} else if(arg === 'about') {
+					$("#homediv").hide();
+					$("#aboutdiv").show('normal');
+				}
+			}
+		</script>
+	</body>
+</html>
