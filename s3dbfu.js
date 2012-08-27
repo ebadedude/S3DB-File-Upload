@@ -91,6 +91,23 @@ if(!String.hasOwnProperty('trim')) {
 		}
 	};
 	
+	//select text
+	_selecttext = function(element) {
+	    var doc = document;
+	    var text = doc.getElementById(element);    
+	    if (doc.body.createTextRange) { // ms
+	        var range = doc.body.createTextRange();
+	        range.moveToElementText(text);
+	        range.select();
+	    } else if (window.getSelection) { // moz, opera, webkit
+	        var selection = window.getSelection();            
+	        var range = doc.createRange();
+	        range.selectNodeContents(text);
+	        selection.removeAllRanges();
+	        selection.addRange(range);
+	    }
+	};
+	
 	//type: right, left
 	_padzero = function(str,len,type) {
 		var diff='', mylen=str.trim().length;
@@ -207,10 +224,14 @@ if(!String.hasOwnProperty('trim')) {
 				.append($('<li></li>')
 					.append($('<a></a>')
 						.attr('href','javascript:void(0);')
-						.text('KEY: '+_apikey)
-
+						.text('KEY: ')
+						.append($('<span></span>')
+							.attr('id', 'apikey')
+							.text(_apikey)
+						)
 			));
 			$("#s3db-instance").text("connected to " + _s3dburl);
+			//$('a.btn.dropdown-toggle').click(function(e){_selecttext('apikey');});
 		},
 		loadmodals:function() {
 			var unCode='luntbl', akCode='laktbl', hasS3DBUrl=false, loginUN, loginAK;
@@ -418,8 +439,6 @@ if(!String.hasOwnProperty('trim')) {
 									} else {
 										result[0].message.result[i].download_url = '#';
 									}
-									//fix delete button
-									
 								}
 			                    $(that).fileupload('option', 'done')
 			                        .call(that, null, {result: result[0].message.result});
