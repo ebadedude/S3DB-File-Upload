@@ -2,9 +2,12 @@ S3DB File Upload Tool
 =====================
 This is a tool that allows users to upload files to S3DB instance and it is completely mplemented in JavaScript. Users can log into S3DB with their username and password combinations or user generated api keys. You also have to specify the Item ID and Rule ID combination that you plan to upload the files to in the configuration [see usage below].  
 
-
 **Version**
 1.0.2
+
+
+**Demo Page**
+Demo Page Link [link](http://ebadedude.github.com/S3DB-File-Upload)
 
 
 **Dependencies**
