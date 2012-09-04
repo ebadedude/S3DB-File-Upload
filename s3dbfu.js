@@ -203,46 +203,39 @@ if(!String.hasOwnProperty('trim')) {
 		displaymsg:function(parentid,msg,type,timeout) {
 			//type: error, warning, success, info
 			var myrand = 'msg'+_padzero(parseInt(Math.random()*1000000),7,'left');
-
 			var mydiv = document.createElement('div');
-			
-			
+			mydiv.setAttribute('id',myrand);
 			if(timeout && intval(timeout) > 0) {
-				
+				//do some
 			}
 		},
 		loginmenu:function() {
 			$("#username").text(_username);
-			$("#user-access-options")
+			$("#usermenu1")
 				.empty()
-				.append($('<li></li>')
-					.append($('<a></a>')
-						.attr('href','javascript:window.location.reload();void(0);')
-						.text("Sign Out")))
-				.append($('<li></li>')
-					.addClass('divider'))	
-				.append($('<li></li>')
-					.append($('<a></a>')
-						.attr('href','javascript:void(0);')
-						.text('KEY: ')
-						.append($('<span></span>')
-							.attr('id', 'apikey')
-							.text(_apikey)
-						)
-			));
+				.append($('<a></a>')
+					.attr('href','javascript:window.location.reload();void(0);')
+					.text("Sign Out"));
+			$("#usermenu3")
+				.empty()
+				.append($('<a></a>')
+					.attr('href','javascript:void(0);')
+					.text('KEY: ')
+					.append($('<span></span>')
+						.attr('id', 'apikey')
+						.text(_apikey)));
 			$("#s3db-instance").text("connected to " + _s3dburl);
 			//$('a.btn.dropdown-toggle').click(function(e){_selecttext('apikey');});
 		},
 		loadmodals:function() {
-			var unCode='luntbl', akCode='laktbl', hasS3DBUrl=false, loginUN, loginAK;
+			var unCode='luntbl', akCode='laktbl', hasS3DBUrl=false, hasCollection=false, hasRule=false, loginUN, loginAK;
 			
-			if(_s3dburl.trim().length > 0) {
-				hasS3DBUrl = true;
-			}
-			loginUN = _buildtable(unCode, 4, 2);
-			loginAK = _buildtable(akCode, 3, 2);
+			if(_s3dburl.trim().length > 0) { hasS3DBUrl = true; }
+			if(_collid.trim().length > 0) { hasCollection = true; }
+			if(_ruleid.trim().length > 0) { hasRule = true; }
+			loginUN = _buildtable(unCode, 6, 2);
+			loginAK = _buildtable(akCode, 5, 2);
 
-			
 			//login username
 			$("<div></div>")
 				.addClass('modal hide')
@@ -272,8 +265,11 @@ if(!String.hasOwnProperty('trim')) {
 								.text('Cancel'))).appendTo("body");
 			
 			$('#'+unCode+'_1_1').html('<p>S3DB URL: </p>');
-			$('#'+unCode+'_2_1').html('<p>Username: </p>');
-			$('#'+unCode+'_3_1').html('<p>Password: </p>');
+			$('#'+unCode+'_2_1').html('<p>Collection ID: </p>');
+			$('#'+unCode+'_3_1').html('<p>Rule ID: </p>');
+			$('#'+unCode+'_4_1').html('<p>Username: </p>');
+			$('#'+unCode+'_5_1').html('<p>Password: </p>');
+			//s3db url
 			if(hasS3DBUrl) {
 				$('#'+unCode+'_1_2').html('<p>'+_s3dburl+' (<i class="icon-pencil"></i><span style="font-size:.7em;"><a href="javascript:s3dbfu.changes3dburl(1);">change</a></span>)</p>');
 			} else {
@@ -286,19 +282,48 @@ if(!String.hasOwnProperty('trim')) {
 			a_input1_2.type = "hidden";
 			a_input1_2.id = "un_s3dburi_f";
 			document.getElementById(unCode+'_1_1').appendChild(a_input1_2);
-			var a_input2 = document.createElement("input");
-			a_input2.type = "text";
-			a_input2.id = "l_username";
-			document.getElementById(unCode+'_2_2').appendChild(a_input2);
-			var a_input3 = document.createElement("input");
-			a_input3.type = "password";
-			a_input3.id = "l_password";
-			document.getElementById(unCode+'_3_2').appendChild(a_input3);
+			//s3db collection
+			if(hasCollection) {
+				$('#'+unCode+'_2_2').html('<p>'+_collid+' (<i class="icon-pencil"></i><span style="font-size:.7em;"><a href="javascript:s3dbfu.changes3dbcoll(1);">change</a></span>)</p>');
+			} else {
+				var a_input2 = document.createElement("input");
+				a_input2.type = "text";
+				a_input2.id = "un_s3dbcoll";
+				document.getElementById(unCode+'_2_2').appendChild(a_input2);
+			}
+			var a_input2_2 = document.createElement("input");
+			a_input2_2.type = "hidden";
+			a_input2_2.id = "un_s3dbcoll_f";
+			document.getElementById(unCode+'_2_1').appendChild(a_input2_2);
+			//s3db rule
+			if(hasRule) {
+				$('#'+unCode+'_3_2').html('<p>'+_ruleid+' (<i class="icon-pencil"></i><span style="font-size:.7em;"><a href="javascript:s3dbfu.changes3dbrule(1);">change</a></span>)</p>');
+			} else {
+				var a_input3 = document.createElement("input");
+				a_input3.type = "text";
+				a_input3.id = "un_s3dbrule";
+				document.getElementById(unCode+'_3_2').appendChild(a_input3);
+			}
+			var a_input3_2 = document.createElement("input");
+			a_input3_2.type = "hidden";
+			a_input3_2.id = "un_s3dbrule_f";
+			document.getElementById(unCode+'_3_1').appendChild(a_input3_2);
+			//s3db username
+			var a_input4 = document.createElement("input");
+			a_input4.type = "text";
+			a_input4.id = "l_username";
+			document.getElementById(unCode+'_4_2').appendChild(a_input4);
+			//s3db password
+			var a_input5 = document.createElement("input");
+			a_input5.type = "password";
+			a_input5.id = "l_password";
+			document.getElementById(unCode+'_5_2').appendChild(a_input5);
+			//spinner message
 			var a_canvas1 = document.createElement("canvas");
 			a_canvas1.id = "cv_unspin";
 			a_canvas1.height = 5;
 			a_canvas1.width = 5;
-			document.getElementById(unCode+'_4_2').appendChild(a_canvas1);
+			document.getElementById(unCode+'_6_2').appendChild(a_canvas1);
 			
 			//login api key
 			$("<div></div>")
@@ -329,7 +354,10 @@ if(!String.hasOwnProperty('trim')) {
 							.text('Cancel'))).appendTo("body");
 
 			$('#'+akCode+'_1_1').html('<p>S3DB URL: </p>');
-			$('#'+akCode+'_2_1').html('<p>API Key: </p>');
+			$('#'+akCode+'_2_1').html('<p>Collection ID: </p>');
+			$('#'+akCode+'_3_1').html('<p>Rule ID: </p>');
+			$('#'+akCode+'_4_1').html('<p>API Key: </p>');
+			//s3db url
 			if(hasS3DBUrl) {
 				$('#'+akCode+'_1_2').html('<p>'+_s3dburl+' (<i class="icon-pencil"></i><span style="font-size:.7em;"><a href="javascript:s3dbfu.changes3dburl(2);">change</a></span>)</p>');
 			} else {
@@ -342,18 +370,46 @@ if(!String.hasOwnProperty('trim')) {
 			b_input1_2.type = "hidden";
 			b_input1_2.id = "ak_s3dburi_f";
 			document.getElementById(akCode+'_1_1').appendChild(b_input1_2);
-			var b_input2 = document.createElement("input");
-			b_input2.type = "text";
-			b_input2.id = "l_apikey";
-			document.getElementById(akCode+'_2_2').appendChild(b_input2);
+			//s3db collection
+			if(hasCollection) {
+				$('#'+akCode+'_2_2').html('<p>'+_collid+' (<i class="icon-pencil"></i><span style="font-size:.7em;"><a href="javascript:s3dbfu.changes3dbcoll(2);">change</a></span>)</p>');
+			} else {
+				var b_input2 = document.createElement("input");
+				b_input2.type = "text";
+				b_input2.id = "ak_s3dbcoll";
+				document.getElementById(akCode+'_2_2').appendChild(b_input2);
+			}
+			var b_input2_2 = document.createElement("input");
+			b_input2_2.type = "hidden";
+			b_input2_2.id = "ak_s3dbcoll_f";
+			document.getElementById(akCode+'_2_1').appendChild(b_input2_2);
+			//s3db rule
+			if(hasRule) {
+				$('#'+akCode+'_3_2').html('<p>'+_ruleid+' (<i class="icon-pencil"></i><span style="font-size:.7em;"><a href="javascript:s3dbfu.changes3dbrule(2);">change</a></span>)</p>');
+			} else {
+				var b_input3 = document.createElement("input");
+				b_input3.type = "text";
+				b_input3.id = "ak_s3dbrule";
+				document.getElementById(akCode+'_3_2').appendChild(b_input3);
+			}
+			var b_input3_2 = document.createElement("input");
+			b_input3_2.type = "hidden";
+			b_input3_2.id = "ak_s3dbrule_f";
+			document.getElementById(akCode+'_3_1').appendChild(b_input3_2);
+			//s3db apikey
+			var b_input4 = document.createElement("input");
+			b_input4.type = "text";
+			b_input4.id = "l_apikey";
+			document.getElementById(akCode+'_4_2').appendChild(b_input4);
+			//spinner message
 			var b_canvas1 = document.createElement("canvas");
 			b_canvas1.id = "cv_akspin";
 			b_canvas1.height = 5;
 			b_canvas1.width = 5;
-			document.getElementById(akCode+'_3_2').appendChild(b_canvas1);
+			document.getElementById(akCode+'_5_2').appendChild(b_canvas1);
 		},
 		s3dblogin:function(type) {
-			var s3dburl_input, username_input, password_input, apikey_input;
+			var s3dburl_input, s3dbcoll_input, s3dbrule_input, login_status=true, username_input, password_input, apikey_input;
 			
 			username_input = $("#l_username").val().trim();
 			password_input = $("#l_password").val().trim();
@@ -362,18 +418,24 @@ if(!String.hasOwnProperty('trim')) {
 
 			if(type == 'loginUN') {
 				s3dburl_input = $("#un_s3dburi").val();
+				s3dbcoll_input = $("#un_s3dbcoll").val();
+				s3dbrule_input = $("#un_s3dbrule").val();
 			} else {
 				s3dburl_input = $("#ak_s3dburi").val();
+				s3dbcoll_input = $("#ak_s3dbcoll").val();
+				s3dbrule_input = $("#ak_s3dbrule").val();
 			}
-
+			//fallback
 			if(typeof s3dburl_input === "undefined") { s3dburl_input = _s3dburl; }
+			if(typeof s3dbcoll_input === "undefined") { s3dbcoll_input = _collid; }
+			if(typeof s3dbrule_input === "undefined") { s3dbrule_input = _ruleid; }
+
+			//s3db url check
 			if(s3dburl_input.trim().length > 0) {
 				if(s3dburl_input.trim().substr(s3dburl_input.trim().length-1,1)== "/"){
 					s3dburl_input = s3dburl_input.trim().substr(0,s3dburl_input.trim().length-1);
 					_s3dburl = s3dburl_input;
 				}
-			}
-			if(s3dburl_input.trim().length > 0) {
 				if(s3dburl_input.trim().substr(0,7).toLowerCase() === "http://"){
 					//do nothing
 				} else if(s3dburl_input.trim().substr(0,8).toLowerCase() === "https://") {
@@ -382,14 +444,40 @@ if(!String.hasOwnProperty('trim')) {
 					s3dburl_input = 'http://'+s3dburl_input;
 					_s3dburl = s3dburl_input;
 				}
+			} else {
+				login_status = false;
+				console.log('ERROR: Invalid S3DB URL specified.');
+				//TODO: display error for GUI
 			}
 			
-			if(type == 'loginUN') {
-				$("#un_s3dburi_f").val(s3dburl_input);
-				_jsonread(s3dburl_input+'/URI.php?format=json&callback=s3dbfu.jsonexec','s_un_url',"s3dbfu.s3dblogin_un('"+username_input+"','"+password_input+"')");
-			} else {
-				$("#ak_s3dburi_f").val(s3dburl_input);
-				_jsonread(s3dburl_input+'/URI.php?format=json&callback=s3dbfu.jsonexec','s_un_url',"s3dbfu.s3dblogin_ak('"+apikey_input+"')");
+			//Collection ID check
+			if(s3dbcoll_input.trim().length < 1) {
+				login_status = false;
+				console.log('ERROR: Invalid Collection ID specified.');
+				//TODO: display error for GUI
+			}
+			
+			//Collection ID check
+			if(s3dbrule_input.trim().length < 1) {
+				login_status = false;
+				console.log('ERROR: Invalid Rule ID specified.');
+				//TODO: display error for GUI
+			}
+
+			if(login_status === true) {
+				_collid=s3dbcoll_input;
+				_ruleid=s3dbrule_input;
+				if(type == 'loginUN') {
+					$("#un_s3dburi_f").val(s3dburl_input);
+					$("#un_s3dbcoll_f").val(s3dbcoll_input);
+					$("#un_s3dbrule_f").val(s3dbrule_input);
+					_jsonread(s3dburl_input+'/URI.php?format=json&callback=s3dbfu.jsonexec','s_un_url',"s3dbfu.s3dblogin_un('"+username_input+"','"+password_input+"')");
+				} else {
+					$("#ak_s3dburi_f").val(s3dburl_input);
+					$("#ak_s3dbcoll_f").val(s3dbcoll_input);
+					$("#ak_s3dbrule_f").val(s3dbrule_input);
+					_jsonread(s3dburl_input+'/URI.php?format=json&callback=s3dbfu.jsonexec','s_un_url',"s3dbfu.s3dblogin_ak('"+apikey_input+"')");
+				}
 			}
 		},
 		s3dblogin_un:function(uname,pass){
@@ -480,14 +568,48 @@ if(!String.hasOwnProperty('trim')) {
 			var input1 = document.createElement("input");
 			input1.type = "text";
 			input1.value = _s3dburl;
-			if(type==1) {
+			if(type==1) {	//username
 				input1.id = "un_s3dburi";
 				$('#'+unCode+'_1_2').html('');
 				document.getElementById(unCode+'_1_2').appendChild(input1);
-			} else {
+			} else {		//apikey
 				input1.id = "ak_s3dburi";
 				$('#'+akCode+'_1_2').html('');
 				document.getElementById(akCode+'_1_2').appendChild(input1);
+			}
+		},
+		changes3dbcoll:function(type) {
+			var unCode='luntbl', akCode='laktbl';
+			type = parseInt(type);
+			
+			var input1 = document.createElement("input");
+			input1.type = "text";
+			input1.value = _collid;
+			if(type==1) {	//username
+				input1.id = "un_s3dbcoll";
+				$('#'+unCode+'_2_2').html('');
+				document.getElementById(unCode+'_2_2').appendChild(input1);
+			} else {		//apikey
+				input1.id = "ak_s3dbcoll";
+				$('#'+akCode+'_2_2').html('');
+				document.getElementById(akCode+'_2_2').appendChild(input1);
+			}
+		},
+		changes3dbrule:function(type) {
+			var unCode='luntbl', akCode='laktbl';
+			type = parseInt(type);
+			
+			var input1 = document.createElement("input");
+			input1.type = "text";
+			input1.value = _ruleid;
+			if(type==1) {	//username
+				input1.id = "un_s3dbrule";
+				$('#'+unCode+'_3_2').html('');
+				document.getElementById(unCode+'_3_2').appendChild(input1);
+			} else {		//apikey
+				input1.id = "ak_s3dbrule";
+				$('#'+akCode+'_3_2').html('');
+				document.getElementById(akCode+'_3_2').appendChild(input1);
 			}
 		},
 		//draw spinner on specified canvas id (id) and size (s)
